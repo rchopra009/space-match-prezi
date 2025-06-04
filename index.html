@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceMatch 2.0 - The Salesforce of Commercial Real Estate</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --accent-gold: #ffd700;
+            --accent-blue: #00d4ff;
+            --success-green: #00ff88;
+            --danger-red: #ff4757;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 98px,
+                rgba(0, 212, 255, 0.1) 100px
+            ),
+            repeating-linear-gradient(
+                180deg,
+                transparent,
+                transparent 98px,
+                rgba(0, 212, 255, 0.1) 100px
+            );
+        }
+
+        .header {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logo i {
+            color: var(--accent-blue);
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .nav-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .nav-stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-weight: 800;
+            color: var(--accent-gold);
+            display: block;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+            font-size: 0.75rem;
+        }
+
+        .blackrock-badge {
+            background: linear-gradient(45deg, var(--accent-gold), #ffed4e);
+            color: #1a1a2e;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .main-container {
+            margin-top: 80px;
+            padding: 0;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 6rem 2rem;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .disruption-badge {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            margin-bottom: 2rem;
+            display: inline-block;
+            font-weight: 600;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
+            to { box-shadow: 0 0 30px rgba(0, 212, 255, 0.8); }
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-gold) 50%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--accent-gold);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .market-impact {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .market-impact::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .impact-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--danger-red);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .impact-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .problem-card {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: left;
+        }
+
+        .problem-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--danger-red);
+        }
+
+        .problem-list {
+            list-style: none;
+        }
+
+        .problem-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .problem-list li::before {
+            content: '⚠';
+            position: absolute;
+            left: 0;
+            color: var(--danger-red);
+        }
+
+        .solution-section {
+            padding: 6rem 2rem;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+        }
+
+        .solution-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            color: var(--success-green);
+            text-transform: uppercase;
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem auto;
+            max-width: 1200px;
+        }
+
+        .pillar-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pillar-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .pillar-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-blue);
+        }
+
+        .pillar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+        }
+
+        .pillar-result {
+            background: linear-gradient(45deg, var(--success-green), #00e676);
+            color: #1a1a2e;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+
+        .metrics-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 4rem 2rem;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .metric-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ai-system {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 4rem 2rem;
+            margin: 4rem 2rem;
+        }
+
+        .ai-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+        }
+
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .agent-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid var(--accent-blue);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .agent-number {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--accent-blue);
+            color: #1a1a2e;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+        }
+
+        .agent-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+        }
+
+        .revenue-section {
+            padding: 6rem 2rem;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+        }
+
+        .revenue-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+        }
+
+        .revenue-timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .year-card {
+            background: var(--glass-bg);
+            border: 2px solid var(--accent-gold);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .year-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue));
+        }
+
+        .year-number {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .year-revenue {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--success-green);
+            margin-bottom: 1rem;
+        }
+
+        .blackrock-cta {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 3px solid var(--accent-gold);
+            border-radius: 30px;
+            padding: 4rem 2rem;
+            margin: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blackrock-cta::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-blue), var(--accent-gold));
+            border-radius: 30px;
+            z-index: -1;
+            animation: borderRotate 3s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .cta-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, var(--accent-gold), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .cta-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+
+        .investment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .investment-item {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--accent-gold);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .investment-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, var(--accent-gold), #ffed4e);
+            color: #1a1a2e;
+            padding: 1.5rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.7);
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: var(--accent-blue);
+            opacity: 0.1;
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.1;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--success-green);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+            display: none;
+            animation: slideIn 0.3s ease;
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .search-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 4rem 2rem;
+            margin: 4rem 2rem;
+            position: relative;
+        }
+
+        .search-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+        }
+
+        .segment-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .segment-tab {
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .segment-tab.active {
+            background: linear-gradient(45deg, var(--accent-blue), #00e5ff);
+            color: #1a1a2e;
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .form-input {
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ai-search-btn {
+            grid-column: span 2;
+            background: linear-gradient(45deg, var(--accent-blue), #00e5ff);
+            color: #1a1a2e;
+            padding: 1.5rem 2rem;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .ai-search-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .ai-search-btn {
+                grid-column: span 1;
+            }
+            
+            .nav-stats {
+                display: none;
+            }
+            
+            .segment-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .success-animation {
+            animation: successPulse 0.6s ease;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); background: rgba(0, 255, 136, 0.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg"></div>
+    
+    <div class="floating-elements">
+        <div class="floating-element" style="left: 5%; width: 20px; height: 20px; animation-delay: 0s;"></div>
+        <div class="floating-element" style="left: 15%; width: 25px; height: 25px; animation-delay: 3s;"></div>
+        <div class="floating-element" style="left: 25%; width: 18px; height: 18px; animation-delay: 6s;"></div>
+        <div class="floating-element" style="left: 35%; width: 22px; height: 22px; animation-delay: 9s;"></div>
+        <div class="floating-element" style="left: 45%; width: 16px; height: 16px; animation-delay: 12s;"></div>
+        <div class="floating-element" style="left: 55%; width: 24px; height: 24px; animation-delay: 15s;"></div>
+        <div class="floating-element" style="left: 65%; width: 19px; height: 19px; animation-delay: 18s;"></div>
+        <div class="floating-element" style="left: 75%; width: 21px; height: 21px; animation-delay: 21s;"></div>
+        <div class="floating-element" style="left: 85%; width: 17px; height: 17px; animation-delay: 24s;"></div>
+        <div class="floating-element" style="left: 95%; width: 23px; height: 23px; animation-delay: 27s;"></div>
+    </div>
+
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-rocket"></i>
+                SpaceMatch 2.0
+            </div>
+            <div class="nav-stats">
+                <div class="nav-stat">
+                    <span class="stat-value">₹7,500 Cr</span>
+                    <div class="stat-label">Market Size</div>
+                </div>
+                <div class="nav-stat">
+                    <span class="stat-value">₹2B</span>
+                    <div class="stat-label">Lost Annually</div>
+                </div>
+                <div class="nav-stat">
+                    <span class="stat-value">10-15x</span>
+                    <div class="stat-label">Expected ROI</div>
+                </div>
+            </div>
+            <div class="blackrock-badge">
+                🏆 BlackRock Pitch Ready
+            </div>
+        </nav>
+    </header>
+
+    <div class="notification" id="notification">
+        <strong>🚀 AI System Alert:</strong> New qualified lead matched!
+    </div>
+
+    <main class="main-container">
+        <section class="hero-section">
+            <div class="disruption-badge">
+                🚀 Disrupting ₹15B Market Through AI-Native Intelligence
+            </div>
+            
+            <h1 class="hero-title">The Salesforce of Commercial Real Estate</h1>
+            <h2 class="hero-subtitle">Connecting Opportunity Through Intelligence</h2>
+            <p class="hero-description">
+                India's first AI-native platform solving the critical agent incentivization problem while transforming how businesses discover and transact commercial real estate across three distinct segments.
+            </p>
+        </section>
+
+        <section class="market-impact">
+            <h2 class="impact-title">₹2B Lost Annually in Inefficiencies</h2>
+            <p class="impact-subtitle">The India Challenge: Broken System, Massive Opportunity</p>
+            
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <h3 class="problem-title">🏢 For Businesses</h3>
+                    <ul class="problem-list">
+                        <li>60+ days to find suitable commercial space</li>
+                        <li>70% of listings are outdated or irrelevant</li>
+                        <li>30+ documents required for transactions</li>
+                        <li>8-12 different vendors for complete process</li>
+                        <li>₹25L+ in transaction fees</li>
+                    </ul>
+                </div>
+                
+                <div class="problem-card">
+                    <h3 class="problem-title">🤝 For Agents</h3>
+                    <ul class="problem-list">
+                        <li>No exclusive listings - compete on equal footing</li>
+                        <li>95% of leads are unqualified time-wasters</li>
+                        <li>Manual listing creation takes 3-4 hours</li>
+                        <li>Fragmented tools: CRM ≠ Discovery + Legal</li>
+                        <li>5% average conversion rate</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="solution-section">
+            <h2 class="solution-title">Our Breakthrough Priority Lead System</h2>
+            
+            <div class="pillars-grid">
+                <div class="pillar-card">
+                    <div class="pillar-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="pillar-title">First-Claim Priority</h3>
+                    <p>First agent to claim property gets priority on all leads for that property</p>
+                    <div class="pillar-result">Agents WANT to Use Our Platform</div>
+                </div>
+
+                <div class="pillar-card">
+                    <div class="pillar-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="pillar-title">AI-Qualified Leads</h3>
+                    <p>Only serious buyers reach agents through advanced AI scoring</p>
+                    <div class="pillar-result">3-5x Conversion Rate</div>
+                </div>
+
+                <div class="pillar-card">
+                    <div class="pillar-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h3 class="pillar-title">Performance Tiers</h3>
+                    <p>Better agents get better placement, premium features, and priority access</p>
+                    <div class="pillar-result">25-35% Higher Conversion</div>
+                </div>
+            </div>
+
+            <div class="metrics-showcase">
+                <div class="metric-card">
+                    <span class="metric-number">25-35%</span>
+                    <div class="metric-label">Conversion Rate</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">85%</span>
+                    <div class="metric-label">Time Savings</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">3-5x</span>
+                    <div class="metric-label">Lead Quality</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">60%</span>
+                    <div class="metric-label">Cost Reduction</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="ai-system">
+            <h2 class="ai-title">Multi-Agent AI Platform Architecture</h2>
+            
+            <div class="agents-grid">
+                <div class="agent-card">
+                    <div class="agent-number">1</div>
+                    <h3 class="agent-title">Data Discovery Agent</h3>
+                    <p>Scrapes 50+ property sources, extracts structured data using GPT-4V</p>
+                </div>
+
+                <div class="agent-card">
+                    <div class="agent-number">2</div>
+                    <h3 class="agent-title">Data Validation Agent</h3>
+                    <p>Cross-references with Google Maps, detects duplicates and fraud</p>
+                </div>
+
+                <div class="agent-card">
+                    <div class="agent-number">3</div>
+                    <h3 class="agent-title">Market Intelligence Agent</h3>
+                    <p>Price trend analysis, demand forecasting, competitive insights</p>
+                </div>
+
+                <div class="agent-card">
+                    <div class="agent-number">4</div>
+                    <h3 class="agent-title">Lead Matching Agent</h3>
+                    <p>AI-powered property matching, automated follow-up sequences</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="search-section">
+            <h2 class="search-title">AI-Powered Property Discovery</h2>
+            
+            <div class="segment-tabs">
+                <div class="segment-tab active" data-segment="traditional">
+                    Traditional Commercial
+                    <small style="display: block; opacity: 0.8;">60% • ₹50L-5Cr</small>
+                </div>
+                <div class="segment-tab" data-segment="coworking">
+                    Flexible Co-working
+                    <small style="display: block; opacity: 0.8;">25% • ₹10K-2L/month</small>
+                </div>
+                <div class="segment-tab" data-segment="independent">
+                    Independent Offices
+                    <small style="display: block; opacity: 0.8;">15% • ₹25L-10Cr</small>
+                </div>
+            </div>
+
+            <div class="search-form">
+                <input type="text" class="form-input" placeholder="Location (NCR, Mumbai, Bangalore)" value="Gurgaon, Cyber City">
+                <input type="text" class="form-input" placeholder="Space Requirements" value="2,000-5,000 sq ft">
+                <input type="text" class="form-input" placeholder="Budget Range" value="₹1L-3L/month">
+                <select class="form-input">
+                    <option>Lease Duration</option>
+                    <option>3-9 years (Traditional)</option>
+                    <option>Month-to-month (Flexible)</option>
+                    <option>5-9 years (Independent)</option>
+                </select>
+                <button class="ai-search-btn" onclick="performAISearch()">
+                    <i class="fas fa-robot"></i> AI-Powered Property Match
+                </button>
+            </div>
+        </section>
+
+        <section class="revenue-section">
+            <h2 class="revenue-title">Path to ₹135 Crore</h2>
+            
+            <div class="revenue-timeline">
+                <div class="year-card">
+                    <div class="year-number">Year 1</div>
+                    <div class="year-revenue">₹10.5 Cr</div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>500 Agent Subscribers</strong><br>
+                        2,000 Properties<br>
+                        Break-even: Month 8
+                    </div>
+                    <div style="color: var(--success-green); font-weight: 700;">Foundation</div>
+                </div>
+
+                <div class="year-card">
+                    <div class="year-number">Year 2</div>
+                    <div class="year-revenue">₹44 Cr</div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>1,500 Agent Subscribers</strong><br>
+                        8,000 Properties<br>
+                        NCR Market Leadership
+                    </div>
+                    <div style="color: var(--accent-blue); font-weight: 700;">Scale</div>
+                </div>
+
+                <div class="year-card">
+                    <div class="year-number">Year 3</div>
+                    <div class="year-revenue">₹135 Cr</div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>4,000 Agent Subscribers</strong><br>
+                        20,000 Properties<br>
+                        Multi-city Expansion
+                    </div>
+                    <div style="color: var(--accent-gold); font-weight: 700;">Domination</div>
+                </div>
+            </div>
+
+            <div class="metrics-showcase" style="margin-top: 4rem;">
+                <div class="metric-card">
+                    <span class="metric-number">89%</span>
+                    <div class="metric-label">Gross Margin</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">₹2.5L</span>
+                    <div class="metric-label">Agent LTV</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">43%</span>
+                    <div class="metric-label">YoY Growth</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">₹1,000 Cr</span>
+                    <div class="metric-label">Target Valuation</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="blackrock-cta">
+            <h2 class="cta-title">Investment Opportunity</h2>
+            <p class="cta-subtitle">Series A Funding: Transforming India's Commercial Real Estate</p>
+            
+            <div class="investment-details">
+                <div class="investment-item">
+                    <div class="investment-value">₹25 Cr</div>
+                    <div>Series A Round</div>
+                </div>
+                <div class="investment-item">
+                    <div class="investment-value">18 Months</div>
+                    <div>To Break-even</div>
+                </div>
+                <div class="investment-item">
+                    <div class="investment-value">10-15x</div>
+                    <div>Expected ROI</div>
+                </div>
+                <div class="investment-item">
+                    <div class="investment-value">3-4 Years</div>
+                    <div>IPO Timeline</div>
+                </div>
+            </div>
+            
+            <p style="font-size: 1.2rem; margin: 2rem 0; opacity: 0.9;">
+                "We're not just building a platform. We're building the infrastructure of tomorrow's commercial real estate universe."
+            </p>
+            
+            <button class="cta-button" onclick="showInvestmentAlert()">
+                🚀 Schedule BlackRock Presentation
+            </button>
+        </section>
+    </main>
+
+    <script>
+        // Enhanced segment tab functionality
+        document.querySelectorAll('.segment-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.segment-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const segment = this.dataset.segment;
+                updateSearchInterface(segment);
+                showNotification(`Switched to ${segment} commercial segment`);
+            });
+        });
+
+        function updateSearchInterface(segment) {
+            const inputs = document.querySelectorAll('.form-input');
+            
+            switch(segment) {
+                case 'traditional':
+                    inputs[1].placeholder = 'Office Space Size (sq ft)';
+                    inputs[1].value = '2,000-5,000 sq ft';
+                    inputs[2].placeholder = 'Budget Range (₹/month)';
+                    inputs[2].value = '₹1L-3L/month';
+                    break;
+                case 'coworking':
+                    inputs[1].placeholder = 'Number of Seats Required';
+                    inputs[1].value = '20-50 seats';
+                    inputs[2].placeholder = 'Budget per Seat (₹/month)';
+                    inputs[2].value = '₹8K-15K/seat';
+                    break;
+                case 'independent':
+                    inputs[1].placeholder = 'Private Office Size';
+                    inputs[1].value = '1,000-3,000 sq ft';
+                    inputs[2].placeholder = 'Monthly Investment';
+                    inputs[2].value = '₹2L-8L/month';
+                    break;
+            }
+        }
+
+        function performAISearch() {
+            const btn = document.querySelector('.ai-search-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fas fa-cog fa-spin"></i> AI Processing...';
+            btn.style.background = 'linear-gradient(45deg, #ff6b6b, #feca57)';
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> 47 AI-Matched Properties Found!';
+                btn.style.background = 'linear-gradient(45deg, #00ff88, #00e676)';
+                
+                showNotification('AI found 47 premium properties with 94% match score!');
+                
+                // Add success animation to form
+                document.querySelector('.search-form').classList.add('success-animation');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'linear-gradient(45deg, var(--accent-blue), #00e5ff)';
+                    document.querySelector('.search-form').classList.remove('success-animation');
+                }, 3000);
+            }, 2500);
+        }
+
+        function showInvestmentAlert() {
+            const messages = [
+                '🚀 BlackRock presentation scheduled!',
+                '💎 Investor interest confirmed',
+                '🎯 Due diligence materials prepared',
+                '📈 Financial projections validated',
+                '🤝 Strategic partnership opportunity'
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            showNotification(randomMessage);
+            
+            // Animate the CTA button
+            const btn = event.target;
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.innerHTML = `<strong>🚀 SpaceMatch AI:</strong> ${message}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        // Dynamic market updates
+        function updateMarketMetrics() {
+            const metrics = [
+                'New agent onboarded in Mumbai!',
+                'Property claimed in Cyber City!',
+                '₹5 Cr deal closed via platform!',
+                'AI matched 12 qualified leads!',
+                'Platform efficiency up 23%!',
+                'New co-working partner signed!',
+                'Independent office lead converted!'
+            ];
+            
+            const randomMetric = metrics[Math.floor(Math.random() * metrics.length)];
+            showNotification(randomMetric);
+        }
+
+        // Simulate real-time activity
+        setInterval(updateMarketMetrics, 12000);
+
+        // Initial load animations
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                showNotification('Welcome to the future of commercial real estate!');
+            }, 2000);
+            
+            // Animate metric cards on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'slideIn 0.6s ease forwards';
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.metric-card, .pillar-card, .agent-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+
+        // Enhanced interaction feedback
+        document.querySelectorAll('.pillar-card, .metric-card, .agent-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Smooth scrolling enhancement
+        document.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.matrix-bg');
+            const speed = scrolled * 0.5;
+            parallax.style.transform = `translateY(${speed}px)`;
+        });
+    </script>
+</body>
+</html>
